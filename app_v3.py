@@ -118,19 +118,20 @@ with tab_sucursales:
 
     elif vista == "🎬 Vista tipo Netflix (Top)":
         st.markdown("### 🏆 Sucursales Top (estilo Netflix)")
+        cards = """<div style='display:flex; overflow-x:auto; gap:20px;'>"""
         for i, row in top_sucursales.iterrows():
             rank = i + 1
             color = "#00FFAA" if row["cumplimiento"] >= 100 else "#FF4B4B" if row["cumplimiento"] < 70 else "#FFD700"
-            st.markdown(f"""
-            <div style='background-color:#1a1a1a;padding:20px;margin:10px 0;border-radius:18px;display:flex;align-items:center;'>
-                <div style='font-size:100px;font-weight:bold;color:#2E2E2E;margin-right:20px;width:100px;text-align:center;'>{rank}</div>
-                <div>
-                    <h3 style='color:{color};margin-bottom:5px;'>🏢 {row['sucursal']}</h3>
-                    <p style='color:white;margin:0;'>💰 Ventas: ${row['ventas']:,.0f}</p>
-                    <p style='color:white;margin:0;'>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
+            cards += f"""
+                <div style='flex:0 0 auto; width:300px; background-color:#1a1a1a; padding:20px; border-radius:20px;'>
+                    <div style='font-size:70px; font-weight:bold; color:#2E2E2E; text-align:center;'>{rank}</div>
+                    <h3 style='color:{color}; text-align:center;'>🏢 {row['sucursal']}</h3>
+                    <p style='color:white; text-align:center;'>💰 Ventas: ${row['ventas']:,.0f}</p>
+                    <p style='color:white; text-align:center;'>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
+            """
+        cards += "</div>"
+        st.markdown(cards, unsafe_allow_html=True)
 
 with tab_tendencias:
     st.subheader("📈 Comparación General")
