@@ -29,4 +29,5 @@ st.plotly_chart(fig, use_container_width=True)
 # Preguntas sugeridas tipo tarjetas (simulado)
 st.markdown("### 🎯 Preguntas sugeridas")
 questions = ["¿Qué producto vendió más?", "¿Qué sucursal superó la meta?", "¿Cuál es la tendencia semanal?"]
-for q in questions
+for q in questions:
+
