@@ -2,8 +2,19 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-
 from PIL import Image
+
+
+# 👉 ESTA DEBE SER LA PRIMERA LÍNEA DESPUÉS DE LOS IMPORTS
+st.set_page_config(layout="wide", page_title="Chat Gerencial - Ventas", page_icon="📊")
+
+# Mostrar logo
+logo = Image.open("assets/logo.png")
+st.image(logo, width=200)
+
+# Resto del código...
+
+
 
 # Mostrar logo
 logo = Image.open("assets/logo.png")
