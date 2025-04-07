@@ -1,29 +1,16 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from PIL import Image
 
-
-# 👉 ESTA DEBE SER LA PRIMERA LÍNEA DESPUÉS DE LOS IMPORTS
+# ✅ ESTA LÍNEA DEBE IR AQUÍ, justo después de los imports
 st.set_page_config(layout="wide", page_title="Chat Gerencial - Ventas", page_icon="📊")
 
 # Mostrar logo
 logo = Image.open("assets/logo.png")
 st.image(logo, width=200)
 
-# Resto del código...
-
-
-
-# Mostrar logo
-logo = Image.open("assets/logo.png")
-st.image(logo, width=200)
-
-
-st.set_page_config(layout="wide", page_title="Chat Gerencial - Ventas", page_icon="📊")
-
-st.markdown("""<h1 style='color:#FF4B4B;'>🎬 Chat Gerencial Estilo Netflix</h1>""", unsafe_allow_html=True)
+st.markdown("<h1 style='color:#FF4B4B;'>🎬 Chat Gerencial Estilo Netflix</h1>", unsafe_allow_html=True)
 
 # Cargar datos
 data = pd.read_excel("data/ventas_ejemplo.xlsx")
@@ -42,9 +29,4 @@ st.plotly_chart(fig, use_container_width=True)
 # Preguntas sugeridas tipo tarjetas (simulado)
 st.markdown("### 🎯 Preguntas sugeridas")
 questions = ["¿Qué producto vendió más?", "¿Qué sucursal superó la meta?", "¿Cuál es la tendencia semanal?"]
-for q in questions:
-    st.button(q)
-
-# Análisis gerencial simulado
-st.markdown("### 🧠 Análisis Gerencial")
-st.info("🔍 Como CEO: Las ventas están alineadas con la meta general. Recomendamos enfocar esfuerzos en el producto con menor rotación en Barranquilla.")
+for q in questions
