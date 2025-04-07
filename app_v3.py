@@ -34,12 +34,13 @@ with tab_sucursales:
 
     if vista == "🎬 Vista tipo Netflix (Top)":
         st.markdown("### 🏆 Sucursales Top (estilo Netflix)")
-        st.markdown("""
+        html = """
         <style>
         .netflix-carousel {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
             gap: 40px;
             padding-bottom: 20px;
         }
@@ -49,16 +50,18 @@ with tab_sucursales:
             width: 200px;
             height: 320px;
             background-color: #111;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             padding: 15px;
             scroll-snap-align: start;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid #2c2c2c;
         }
         .netflix-rank {
             position: absolute;
             top: 0;
-            left: -30px;
-            font-size: 200px;
+            left: 0;
+            font-size: 150px;
             color: rgba(255,255,255,0.05);
             font-weight: bold;
             z-index: 0;
@@ -67,15 +70,16 @@ with tab_sucursales:
             position: relative;
             z-index: 1;
             text-align: center;
+            margin-top: 50px;
         }
         </style>
-        <div class="netflix-carousel">
-        """, unsafe_allow_html=True)
+        <div class='netflix-carousel'>
+        """
 
         for i, row in top_sucursales.iterrows():
             rank = i + 1
             color = "#00FFAA" if row["cumplimiento"] >= 100 else "#FF4B4B" if row["cumplimiento"] < 70 else "#FFD700"
-            st.markdown(f"""
+            html += f"""
             <div class='netflix-card'>
                 <div class='netflix-rank'>{rank}</div>
                 <div class='netflix-content'>
@@ -84,8 +88,9 @@ with tab_sucursales:
                     <p>📊 {row['cumplimiento']:.2f}%</p>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        html += "</div>"
+        st.markdown(html, unsafe_allow_html=True)
 
 # [...] otras tabs continúan
