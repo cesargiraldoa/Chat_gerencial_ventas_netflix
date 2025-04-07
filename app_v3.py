@@ -118,20 +118,46 @@ with tab_sucursales:
 
     elif vista == "🎬 Vista tipo Netflix (Top)":
         st.markdown("### 🏆 Sucursales Top (estilo Netflix)")
-        cards = """<div style='display:flex; overflow-x:auto; gap:20px;'>"""
+        st.markdown("""
+            <style>
+            .scrolling-wrapper {
+                display: flex;
+                overflow-x: auto;
+                gap: 20px;
+                padding-bottom: 20px;
+            }
+            .scrolling-wrapper::-webkit-scrollbar {
+                height: 8px;
+            }
+            .scrolling-wrapper::-webkit-scrollbar-thumb {
+                background: #FF4B4B;
+                border-radius: 4px;
+            }
+            .card-netflix {
+                flex: 0 0 auto;
+                width: 300px;
+                background-color: #1a1a1a;
+                padding: 20px;
+                border-radius: 20px;
+                text-align: center;
+            }
+            </style>
+            <div class="scrolling-wrapper">
+        """, unsafe_allow_html=True)
+
         for i, row in top_sucursales.iterrows():
             rank = i + 1
             color = "#00FFAA" if row["cumplimiento"] >= 100 else "#FF4B4B" if row["cumplimiento"] < 70 else "#FFD700"
-            cards += f"""
-                <div style='flex:0 0 auto; width:300px; background-color:#1a1a1a; padding:20px; border-radius:20px;'>
-                    <div style='font-size:70px; font-weight:bold; color:#2E2E2E; text-align:center;'>{rank}</div>
-                    <h3 style='color:{color}; text-align:center;'>🏢 {row['sucursal']}</h3>
-                    <p style='color:white; text-align:center;'>💰 Ventas: ${row['ventas']:,.0f}</p>
-                    <p style='color:white; text-align:center;'>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
-                </div>
-            """
-        cards += "</div>"
-        st.markdown(cards, unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="card-netflix">
+                <div style='font-size:70px; font-weight:bold; color:#2E2E2E;'>{rank}</div>
+                <h3 style='color:{color};'>🏢 {row['sucursal']}</h3>
+                <p style='color:white;'>💰 Ventas: ${row['ventas']:,.0f}</p>
+                <p style='color:white;'>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""</div>""", unsafe_allow_html=True)
 
 with tab_tendencias:
     st.subheader("📈 Comparación General")
