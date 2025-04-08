@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from datetime import datetime
+import os
 
 st.set_page_config(layout="wide", page_title="Chat Gerencial - Modo Oscuro", page_icon="🔟")
 
@@ -12,6 +13,18 @@ st.set_page_config(layout="wide", page_title="Chat Gerencial - Modo Oscuro", pag
 logo = Image.open("assets/logo.png")
 st.image(logo, width=180)
 st.markdown("<h1 style='color:#FF4B4B;'>🎬 Chat Gerencial Estilo Netflix - Modo Oscuro</h1>", unsafe_allow_html=True)
+
+# Crear datos de ejemplo si no existe el archivo
+if not os.path.exists("data/ventas_ejemplo.xlsx"):
+    ejemplo = pd.DataFrame({
+        "fecha": pd.date_range(start="2025-01-01", periods=60, freq="D").tolist() * 3,
+        "sucursal": ["Barranquilla"]*60 + ["Bogotá"]*60 + ["Medellín"]*60,
+        "producto": ["Cepillo", "Crema", "Enjuague"] * 60,
+        "ventas": [5000, 3000, 2000]*60,
+        "meta": [4500, 3500, 2500]*60,
+    })
+    os.makedirs("data", exist_ok=True)
+    ejemplo.to_excel("data/ventas_ejemplo.xlsx", index=False)
 
 # Cargar datos
 data = pd.read_excel("data/ventas_ejemplo.xlsx")
