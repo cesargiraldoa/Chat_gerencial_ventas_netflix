@@ -67,6 +67,26 @@ if archivo:
         else:
             st.info("🔍 Aquí puedes hacer preguntas sobre ventas, productos o desempeño. Escribe tu consulta arriba.")
 
+        st.markdown("---")
+        st.subheader("🧠 Preguntas y Respuestas Frecuentes")
+        preguntas = [
+            "¿Cuál es el producto más vendido?",
+            "¿Qué sucursal vendió más?",
+            "¿Quién es el vendedor con más ventas?",
+            "¿Cuál es el promedio de cumplimiento?",
+            "¿En qué día se vendió más?"
+        ]
+        respuestas = [
+            f"El producto más vendido es **{producto_top}**, con un total de ${df.groupby('producto')['ventas_reales'].sum().max():,.0f}.",
+            f"La sucursal con más ventas es **{sucursal_top}**, alcanzando ${df.groupby('sucursal')['ventas_reales'].sum().max():,.0f} en ventas.",
+            f"El vendedor con más ventas es **{vendedor_top}**, con un total de ${df.groupby('vendedor')['ventas_reales'].sum().max():,.0f}.",
+            f"El promedio de cumplimiento es **{cumplimiento_prom:.2f}%** en todo el periodo evaluado.",
+            f"El día con más ventas fue **{df.groupby('dia')['ventas_reales'].sum().idxmax()}**, con ${df.groupby('dia')['ventas_reales'].sum().max():,.0f} en total."
+        ]
+        for i in range(len(preguntas)):
+            st.markdown(f"**❓ {preguntas[i]}**")
+            st.markdown(f"✅ {respuestas[i]}")
+
     with tab_gerencial:
         st.subheader("📥 Informe Gerencial PDF")
         if st.button("📥 Descargar análisis en PDF"):
