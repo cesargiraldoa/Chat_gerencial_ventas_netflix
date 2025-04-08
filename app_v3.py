@@ -90,6 +90,5 @@ if archivo:
                 pdf.set_font("Arial", '', 11)
                 pdf.multi_cell(0, 10, "\nRecomendaciones:\n- CEO: Estrategia basada en ciudades con mejor desempeño.\n- Marketing: Campañas en horas y días clave.\n- Comercial: Metas dinámicas, incentivos.\n- Vendedores: Técnicas de economía conductual.\n")
 
-                pdf_output = BytesIO()
-                pdf.output(pdf_output)
-                st.download_button("📄 Descargar Informe PDF", data=pdf_output.getvalue(), file_name="analisis_gerencial.pdf", mime="application/pdf")
+                pdf_bytes = pdf.output(dest='S').encode('latin1')
+                st.download_button("📄 Descargar Informe PDF", data=pdf_bytes, file_name="analisis_gerencial.pdf", mime="application/pdf")
