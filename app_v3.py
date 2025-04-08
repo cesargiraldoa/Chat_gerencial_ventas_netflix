@@ -119,5 +119,10 @@ with tab_chat:
             st.info(f"🔍 El producto más vendido es: **{producto_top}**")
         elif "cumplimiento" in pregunta.lower():
             st.info(f"📊 El cumplimiento global actual es de **{cumplimiento_global:.2f}%**")
+        elif "promedio" in pregunta.lower() and "ventas" in pregunta.lower():
+            promedio_ventas = data['ventas'].mean()
+            fig = px.histogram(data, x='producto', y='ventas', histfunc='avg', title="Promedio de ventas por producto")
+            st.info(f"📉 El promedio de ventas es **${promedio_ventas:,.0f}**")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("🤔 Lo siento, aún no tengo una respuesta para esa pregunta.")
