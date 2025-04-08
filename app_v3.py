@@ -33,72 +33,18 @@ with tab_sucursales:
 
     if vista == "🎬 Vista tipo Netflix (Top)":
         st.markdown("### 🏆 Sucursales Top (estilo Netflix)")
+        selected_sucursal = st.selectbox("Selecciona una sucursal para ver análisis:", top_sucursales["sucursal"])
 
-        st.markdown("""
-        <style>
-        .netflix-carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            gap: 40px;
-            padding-bottom: 20px;
-        }
-        .netflix-card {
-            position: relative;
-            flex: 0 0 auto;
-            width: 220px;
-            height: 400px;
-            background-color: #111;
-            border-radius: 12px;
-            color: white;
-            padding: 15px;
-            scroll-snap-align: start;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid #2c2c2c;
-        }
-        .netflix-rank {
-            position: absolute;
-            top: 0;
-            left: 0;
-            font-size: 150px;
-            color: rgba(255,255,255,0.05);
-            font-weight: bold;
-            z-index: 0;
-        }
-        .netflix-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            margin-top: 50px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        selected_sucursal = st.session_state.get("selected_sucursal", None)
-
-        st.markdown("<div class='netflix-carousel'>", unsafe_allow_html=True)
         for i, row in top_sucursales.iterrows():
             rank = i + 1
             color = "#00FFAA" if row["cumplimiento"] >= 100 else "#FF4B4B" if row["cumplimiento"] < 70 else "#FFD700"
             st.markdown(f"""
-                <div class='netflix-card'>
-                    <div class='netflix-rank'>{rank}</div>
-                    <div class='netflix-content'>
-                        <h4 style='color:{color};'>🏢 {row['sucursal']}</h4>
-                        <p>💰 ${row['ventas']:,.0f}</p>
-                        <p>📊 {row['cumplimiento']:.2f}%</p>
-                        <form action='' method='post'>
-                            <input type='submit' name='submit_btn_{i}' value='Ver análisis' class='netflix-btn' />
-                        </form>
-                    </div>
+                <div style='border:1px solid #333; border-radius:12px; padding:20px; margin-bottom:15px;'>
+                    <h3 style='color:{color};'>🏢 {rank}. {row['sucursal']}</h3>
+                    <p>💰 Ventas: ${row['ventas']:,.0f}</p>
+                    <p>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
                 </div>
             """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        for i, row in top_sucursales.iterrows():
-            if st.session_state.get(f"submit_btn_{i}") or st.form_submit_button(f"submit_btn_{i}"):
-                st.session_state.selected_sucursal = row['sucursal']
 
         if selected_sucursal:
             st.markdown(f"### 📊 Análisis de {selected_sucursal}")
@@ -123,17 +69,12 @@ with tab_productos:
 
     if vista_productos == "🎬 Vista tipo Netflix (Top)":
         st.markdown("### 🍿 Productos Top (estilo Netflix)")
-        st.markdown("<div class='netflix-carousel'>", unsafe_allow_html=True)
         for i, row in top_productos.iterrows():
             rank = i + 1
             color = "#00FFAA" if i == 0 else "#FFD700" if i == 1 else "#FF4B4B"
             st.markdown(f"""
-                <div class='netflix-card'>
-                    <div class='netflix-rank'>{rank}</div>
-                    <div class='netflix-content'>
-                        <h4 style='color:{color};'>📦 {row['producto']}</h4>
-                        <p>💵 ${row['ventas']:,.0f}</p>
-                    </div>
+                <div style='border:1px solid #333; border-radius:12px; padding:20px; margin-bottom:15px;'>
+                    <h3 style='color:{color};'>📦 {rank}. {row['producto']}</h3>
+                    <p>💵 Ventas: ${row['ventas']:,.0f}</p>
                 </div>
             """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
