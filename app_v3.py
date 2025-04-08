@@ -13,7 +13,7 @@ st.set_page_config(layout="wide", page_title="Chat Gerencial - Modo Oscuro", pag
 # Logo y título
 logo = Image.open("assets/logo.png")
 st.image(logo, width=180)
-st.markdown("<h1 style='color:#FF4B4B;'>🎬 Chat Gerencial Estilo Netflix - Modo Oscuro</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color:#FF4B4B;'>🎮 Chat Gerencial Estilo Netflix - Modo Oscuro</h1>", unsafe_allow_html=True)
 
 # Crear datos de ejemplo más realistas
 np.random.seed(42)
@@ -44,10 +44,10 @@ fecha_fin = st.date_input("🗓️ Fecha final", value=pd.to_datetime("2025-12-3
 data = data[(data['fecha'] >= pd.to_datetime(fecha_inicio)) & (data['fecha'] <= pd.to_datetime(fecha_fin))]
 
 # Tabs
-_, tab_inicio, tab_inicio_alternativo, tab_productos, tab_sucursales, tab_tendencias, tab_chat = st.tabs(["🏠 Inicio", "🧠 Inicio Alternativo", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial"])
+tab_inicio, tab_inicio_alternativo, tab_productos, tab_sucursales, tab_tendencias, tab_chat = st.tabs(["🏠 Inicio", "🧠 Inicio Alternativo", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial"])
 
 with tab_inicio:
-    st.markdown("## 🎬 ¡Bienvenido al Chat Gerencial!")
+    st.markdown("## 🎮 ¡Bienvenido al Chat Gerencial!")
     st.markdown("Este panel te permite visualizar y analizar el desempeño de ventas en tiempo real con una experiencia tipo Netflix. Usa las pestañas para explorar productos, sucursales, tendencias y hacer preguntas al asistente inteligente.")
 
     col1, col2, col3 = st.columns(3)
