@@ -61,16 +61,19 @@ with tab_sucursales:
         st.markdown("### 🏆 Sucursales Top (estilo Netflix)")
         selected_sucursal = st.selectbox("Selecciona una sucursal para ver análisis:", top_sucursales["sucursal"])
 
+        # Layout horizontal para las tarjetas
+        cols = st.columns(len(top_sucursales))
         for i, row in top_sucursales.iterrows():
             rank = i + 1
             color = "#00FFAA" if row["cumplimiento"] >= 100 else "#FF4B4B" if row["cumplimiento"] < 70 else "#FFD700"
-            st.markdown(f"""
-                <div style='border:1px solid #333; border-radius:12px; padding:20px; margin-bottom:15px;'>
-                    <h3 style='color:{color};'>🏢 {rank}. {row['sucursal']}</h3>
-                    <p>💰 Ventas: ${row['ventas']:,.0f}</p>
-                    <p>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
-                </div>
-            """, unsafe_allow_html=True)
+            with cols[i]:
+                st.markdown(f"""
+                    <div style='border:1px solid #333; border-radius:12px; padding:20px; text-align:center;'>
+                        <h3 style='color:{color};'>🏢 {rank}. {row['sucursal']}</h3>
+                        <p>💰 Ventas: ${row['ventas']:,.0f}</p>
+                        <p>📊 Cumplimiento: {row['cumplimiento']:.2f}%</p>
+                    </div>
+                """, unsafe_allow_html=True)
 
         if selected_sucursal:
             st.markdown(f"### 📊 Análisis de {selected_sucursal}")
