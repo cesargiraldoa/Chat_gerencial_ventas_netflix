@@ -4,4 +4,7 @@ plotly
 openpyxl
 fpdf
 kaleido
+fpdf==1.7.2
+
+
 
