@@ -123,5 +123,17 @@ with tab_chat:
         st.success(f"La sucursal con más ventas es **{top}** con un total de ${total:,.0f}.")
         fig = px.bar(data.groupby("sucursal")["ventas"].sum().reset_index(), x="sucursal", y="ventas", title="Ventas por Sucursal")
         st.plotly_chart(fig, use_container_width=True)
+    elif "promedio" in pregunta.lower():
+        promedio = data['ventas'].mean()
+        st.info(f"El promedio de ventas por registro es de ${promedio:,.0f}.")
+        promedio_mes = data.groupby(data['fecha'].dt.to_period("M"))['ventas'].mean().reset_index()
+        fig = px.bar(promedio_mes, x="fecha", y="ventas", title="Promedio de Ventas por Mes")
+        st.plotly_chart(fig, use_container_width=True)
+    elif "cumplimiento" in pregunta.lower():
+        data['cumplimiento'] = data['ventas'] / data['meta'] * 100
+        promedio = data['cumplimiento'].mean()
+        st.success(f"El cumplimiento promedio general es de {promedio:.2f}%")
+        fig = px.box(data, x="sucursal", y="cumplimiento", color="sucursal", title="Distribución de Cumplimiento por Sucursal")
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("Lo siento, aún no tengo una respuesta para esa pregunta.")
