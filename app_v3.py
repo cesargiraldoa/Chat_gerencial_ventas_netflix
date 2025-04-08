@@ -7,6 +7,9 @@ import tempfile
 from matplotlib import pyplot as plt
 from datetime import datetime
 import time
+import face_recognition
+import cv2
+import numpy as np
 
 st.set_page_config(layout="wide")
 st.title("📊 Análisis Gerencial - Modo Netflix")
@@ -32,8 +35,8 @@ if archivo:
     fig_hora = px.bar(df.groupby('hora')['ventas_reales'].sum().reset_index(), x='hora', y='ventas_reales', title="Ventas por Hora")
     fig_suc = px.bar(df.groupby('sucursal')['ventas_reales'].sum().reset_index(), x='sucursal', y='ventas_reales', title="Ventas por Sucursal")
 
-    tab_inicio, tab_productos, tab_sucursales, tab_tendencias, tab_chat, tab_gerencial = st.tabs([
-        "🏠 Inicio", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial", "📑 Informe Gerencial"
+    tab_inicio, tab_productos, tab_sucursales, tab_tendencias, tab_chat, tab_gerencial, tab_facial = st.tabs([
+        "🏠 Inicio", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial", "📑 Informe Gerencial", "🔐 Acceso Facial"
     ])
 
     with tab_inicio:
@@ -130,3 +133,27 @@ if archivo:
 
                 pdf_bytes = pdf.output(dest='S').encode('latin1')
                 st.download_button("📄 Descargar Informe PDF", data=pdf_bytes, file_name="analisis_gerencial.pdf", mime="application/pdf")
+
+    with tab_facial:
+        st.subheader("🔐 Acceso Facial al Informe Gerencial")
+        imagen_base_path = "usuario_base.jpg"  # Debe estar en el mismo directorio
+        try:
+            imagen_registrada = face_recognition.load_image_file(imagen_base_path)
+            codificacion_registrada = face_recognition.face_encodings(imagen_registrada)[0]
+
+            imagen_camera = st.camera_input("📸 Toma una foto para verificar tu identidad")
+            if imagen_camera is not None:
+                imagen_nueva = face_recognition.load_image_file(imagen_camera)
+                codificaciones_nuevas = face_recognition.face_encodings(imagen_nueva)
+
+                if codificaciones_nuevas:
+                    coincidencia = face_recognition.compare_faces([codificacion_registrada], codificaciones_nuevas[0])[0]
+                    if coincidencia:
+                        st.success("✅ Rostro verificado. Acceso concedido al Informe Gerencial.")
+                        st.markdown("### 🔓 Acceso desbloqueado: puedes ir a la pestaña '📑 Informe Gerencial'.")
+                    else:
+                        st.error("❌ Rostro no coincide. Acceso denegado.")
+                else:
+                    st.warning("⚠️ No se detectó ningún rostro en la imagen capturada.")
+        except Exception as e:
+            st.error("Error cargando imagen base. Asegúrate de tener 'usuario_base.jpg' en el directorio.")
