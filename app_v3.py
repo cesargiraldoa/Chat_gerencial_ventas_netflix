@@ -58,7 +58,14 @@ if archivo:
 
     with tab_chat:
         st.subheader("Asistente de Análisis")
-        st.info("🔍 Aquí puedes hacer preguntas sobre ventas, productos o desempeño. Funcionalidad en desarrollo.")
+        user_input = st.text_input("💬 Escribe tu pregunta sobre ventas, productos o desempeño:")
+        if user_input:
+            with st.chat_message("assistant"):
+                st.markdown(f"🧠 Estoy analizando tu pregunta: **{user_input}**")
+                st.markdown("🔎 Respuesta simulada: El producto top actual es **{}**, con un cumplimiento promedio del **{:.2f}%**."
+                            .format(producto_top, cumplimiento_prom))
+        else:
+            st.info("🔍 Aquí puedes hacer preguntas sobre ventas, productos o desempeño. Escribe tu consulta arriba.")
 
     with tab_gerencial:
         st.subheader("📥 Informe Gerencial PDF")
