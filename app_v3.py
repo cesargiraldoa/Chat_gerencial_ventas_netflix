@@ -19,9 +19,23 @@ data = pd.read_excel("data/ventas_ejemplo.xlsx")
 # Filtro por fechas
 fecha_inicio = st.date_input("🗓️ Fecha inicial", value=pd.to_datetime("2025-01-01"))
 fecha_fin = st.date_input("🗓️ Fecha final", value=pd.to_datetime("2025-12-31"))
+data = data[(data['fecha'] >= pd.to_datetime(fecha_inicio)) & (data['fecha'] <= pd.to_datetime(fecha_fin))]
 
 # Tabs
 tab_inicio, tab_productos, tab_sucursales, tab_tendencias, tab_chat = st.tabs(["🏠 Inicio", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial"])
+
+with tab_inicio:
+    st.subheader("📊 Métricas Generales")
+    total_ventas = data['ventas'].sum()
+    total_meta = data['meta'].sum()
+    cumplimiento_global = (total_ventas / total_meta) * 100
+    producto_top = data.groupby("producto")["ventas"].sum().idxmax()
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("🏆 Ventas Totales", f"${total_ventas:,.0f}")
+    col2.metric("🎯 Meta Total", f"${total_meta:,.0f}")
+    col3.metric("📈 Cumplimiento (%)", f"{cumplimiento_global:.2f}%")
+    col4.metric("🔥 Producto Más Vendido", producto_top)
 
 with tab_sucursales:
     st.subheader("🏢 Ranking de Sucursales")
@@ -78,3 +92,20 @@ with tab_productos:
                     <p>💵 Ventas: ${row['ventas']:,.0f}</p>
                 </div>
             """, unsafe_allow_html=True)
+
+with tab_tendencias:
+    st.subheader("📈 Tendencias de Ventas")
+    tendencia = data.groupby(pd.Grouper(key="fecha", freq="M")).agg({'ventas': 'sum'}).reset_index()
+    fig = px.line(tendencia, x="fecha", y="ventas", title="Tendencia mensual de ventas")
+    st.plotly_chart(fig, use_container_width=True)
+
+with tab_chat:
+    st.subheader("💬 Chat Gerencial")
+    pregunta = st.text_input("🤖 Escribe tu pregunta (ej: ¿Cuál es el producto top de esta semana?)")
+    if pregunta:
+        if "producto top" in pregunta.lower():
+            st.info(f"🔍 El producto más vendido es: **{producto_top}**")
+        elif "cumplimiento" in pregunta.lower():
+            st.info(f"📊 El cumplimiento global actual es de **{cumplimiento_global:.2f}%**")
+        else:
+            st.warning("🤔 Lo siento, aún no tengo una respuesta para esa pregunta.")
