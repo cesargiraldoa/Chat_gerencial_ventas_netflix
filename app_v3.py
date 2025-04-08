@@ -98,7 +98,7 @@ with tab_sucursales:
 with tab_tendencias:
     st.markdown("## 📈 Tendencia Mensual")
     data_tend = data.copy()
-    data_tend["mes"] = pd.to_datetime(data_tend["fecha"]).dt.to_timestamp("M")
+    data_tend["mes"] = pd.to_datetime(data_tend["fecha"]).dt.to_period("M").dt.to_timestamp()
     ventas_mes = data_tend.groupby("mes")["ventas"].sum().reset_index()
     fig_tendencia = px.line(ventas_mes, x="mes", y="ventas", title="Evolución de Ventas por Mes")
     st.plotly_chart(fig_tendencia, use_container_width=True)
