@@ -6,6 +6,7 @@ from fpdf import FPDF
 import tempfile
 from matplotlib import pyplot as plt
 from datetime import datetime
+import time
 
 st.set_page_config(layout="wide")
 st.title("📊 Análisis Gerencial - Modo Netflix")
@@ -56,33 +57,43 @@ if archivo:
         st.subheader("Tendencias por Hora")
         st.plotly_chart(fig_hora, use_container_width=True)
 
+    preguntas = [
+        "¿Cuál es el producto más vendido?",
+        "¿Qué sucursal vendió más?",
+        "¿Quién es el vendedor con más ventas?",
+        "¿Cuál es el promedio de cumplimiento?",
+        "¿En qué día se vendió más?"
+    ]
+    respuestas = [
+        f"El producto más vendido es **{producto_top}**, con un total de ${df.groupby('producto')['ventas_reales'].sum().max():,.0f}.",
+        f"La sucursal con más ventas es **{sucursal_top}**, alcanzando ${df.groupby('sucursal')['ventas_reales'].sum().max():,.0f} en ventas.",
+        f"El vendedor con más ventas es **{vendedor_top}**, con un total de ${df.groupby('vendedor')['ventas_reales'].sum().max():,.0f}.",
+        f"El promedio de cumplimiento es **{cumplimiento_prom:.2f}%** en todo el periodo evaluado.",
+        f"El día con más ventas fue **{df.groupby('dia')['ventas_reales'].sum().idxmax()}**, con ${df.groupby('dia')['ventas_reales'].sum().max():,.0f} en total."
+    ]
+
     with tab_chat:
         st.subheader("Asistente de Análisis")
         user_input = st.text_input("💬 Escribe tu pregunta sobre ventas, productos o desempeño:")
         if user_input:
+            respuesta = "No tengo una respuesta para esa pregunta."
+            for i, preg in enumerate(preguntas):
+                if preg.lower() in user_input.lower():
+                    respuesta = respuestas[i]
+                    break
             with st.chat_message("assistant"):
                 st.markdown(f"🧠 Estoy analizando tu pregunta: **{user_input}**")
-                st.markdown("🔎 Respuesta simulada: El producto top actual es **{}**, con un cumplimiento promedio del **{:.2f}%**."
-                            .format(producto_top, cumplimiento_prom))
+                placeholder = st.empty()
+                texto = "✍️ "
+                for c in respuesta:
+                    texto += c
+                    placeholder.markdown(texto)
+                    time.sleep(0.03)
         else:
             st.info("🔍 Aquí puedes hacer preguntas sobre ventas, productos o desempeño. Escribe tu consulta arriba.")
 
         st.markdown("---")
         st.subheader("🧠 Preguntas y Respuestas Frecuentes")
-        preguntas = [
-            "¿Cuál es el producto más vendido?",
-            "¿Qué sucursal vendió más?",
-            "¿Quién es el vendedor con más ventas?",
-            "¿Cuál es el promedio de cumplimiento?",
-            "¿En qué día se vendió más?"
-        ]
-        respuestas = [
-            f"El producto más vendido es **{producto_top}**, con un total de ${df.groupby('producto')['ventas_reales'].sum().max():,.0f}.",
-            f"La sucursal con más ventas es **{sucursal_top}**, alcanzando ${df.groupby('sucursal')['ventas_reales'].sum().max():,.0f} en ventas.",
-            f"El vendedor con más ventas es **{vendedor_top}**, con un total de ${df.groupby('vendedor')['ventas_reales'].sum().max():,.0f}.",
-            f"El promedio de cumplimiento es **{cumplimiento_prom:.2f}%** en todo el periodo evaluado.",
-            f"El día con más ventas fue **{df.groupby('dia')['ventas_reales'].sum().idxmax()}**, con ${df.groupby('dia')['ventas_reales'].sum().max():,.0f} en total."
-        ]
         for i in range(len(preguntas)):
             st.markdown(f"**❓ {preguntas[i]}**")
             st.markdown(f"✅ {respuestas[i]}")
