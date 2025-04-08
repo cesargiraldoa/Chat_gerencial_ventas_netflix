@@ -66,9 +66,9 @@ with tab_inicio_alternativo:
     st.markdown("## 🧠 Análisis Rápido y Destacados")
     st.markdown("Conoce de un vistazo los elementos clave destacados:")
 
-    top_producto = data.groupby("producto")["ventas"].sum().idxmax()
-    top_sucursal = data.groupby("sucursal")["ventas"].sum().idxmax()
-    top_vendedor = data.groupby("vendedor")["ventas"].sum().idxmax()
+    top_producto = data.groupby("producto")['ventas'].sum().idxmax()
+    top_sucursal = data.groupby("sucursal")['ventas'].sum().idxmax()
+    top_vendedor = data.groupby("vendedor")['ventas'].sum().idxmax()
 
     st.markdown("### 🔝 Resúmenes:")
     col1, col2, col3 = st.columns(3)
@@ -79,4 +79,49 @@ with tab_inicio_alternativo:
     fig_bar = px.bar(data.groupby("producto")["ventas"].sum().reset_index(), x="producto", y="ventas", title="Ventas Totales por Producto", color="producto")
     st.plotly_chart(fig_bar, use_container_width=True)
 
-# El resto del código permanece igual
+with tab_productos:
+    st.markdown("## 📦 Ventas por Producto")
+    filtro = st.selectbox("Filtrar por sucursal:", ["Todas"] + sorted(data['sucursal'].unique()))
+    data_filtrada = data if filtro == "Todas" else data[data['sucursal'] == filtro]
+    resumen_productos = data_filtrada.groupby("producto")["ventas"].sum().reset_index()
+    fig_productos = px.bar(resumen_productos, x="producto", y="ventas", title="Ventas por Producto", color="producto")
+    st.plotly_chart(fig_productos, use_container_width=True)
+
+with tab_sucursales:
+    st.markdown("## 🏢 Ranking de Sucursales")
+    filtro = st.selectbox("Filtrar por producto:", ["Todos"] + sorted(data['producto'].unique()))
+    data_filtrada = data if filtro == "Todos" else data[data['producto'] == filtro]
+    resumen_suc = data_filtrada.groupby("sucursal")["ventas"].sum().sort_values(ascending=False).reset_index()
+    for i, row in resumen_suc.iterrows():
+        st.markdown(f"### {i+1}. {row['sucursal']} - 💰 Ventas: ${row['ventas']:,.0f}")
+
+with tab_tendencias:
+    st.markdown("## 📈 Tendencia Mensual")
+    data["mes"] = pd.to_datetime(data["fecha"]).dt.to_period("M")
+    ventas_mes = data.groupby("mes")["ventas"].sum().reset_index()
+    fig_tendencia = px.line(ventas_mes, x="mes", y="ventas", title="Evolución de Ventas por Mes")
+    st.plotly_chart(fig_tendencia, use_container_width=True)
+
+with tab_chat:
+    st.markdown("## 💬 Chat Gerencial")
+    pregunta = st.text_input("Escribe tu pregunta:", "¿Cuál es el producto más vendido?")
+    if "producto" in pregunta.lower():
+        top = data.groupby("producto")["ventas"].sum().idxmax()
+        total = data.groupby("producto")["ventas"].sum().max()
+        st.success(f"El producto más vendido es **{top}** con un total de ${total:,.0f} en ventas.")
+        fig = px.pie(data.groupby("producto")["ventas"].sum().reset_index(), names="producto", values="ventas", title="Distribución de Ventas")
+        st.plotly_chart(fig, use_container_width=True)
+    elif "vendedor" in pregunta.lower():
+        top = data.groupby("vendedor")["ventas"].sum().idxmax()
+        total = data.groupby("vendedor")["ventas"].sum().max()
+        st.success(f"El vendedor con más ventas es **{top}** con un total de ${total:,.0f}.")
+        fig = px.bar(data.groupby("vendedor")["ventas"].sum().reset_index(), x="vendedor", y="ventas", title="Ventas por Vendedor")
+        st.plotly_chart(fig, use_container_width=True)
+    elif "sucursal" in pregunta.lower():
+        top = data.groupby("sucursal")["ventas"].sum().idxmax()
+        total = data.groupby("sucursal")["ventas"].sum().max()
+        st.success(f"La sucursal con más ventas es **{top}** con un total de ${total:,.0f}.")
+        fig = px.bar(data.groupby("sucursal")["ventas"].sum().reset_index(), x="sucursal", y="ventas", title="Ventas por Sucursal")
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("Lo siento, aún no tengo una respuesta para esa pregunta.")
