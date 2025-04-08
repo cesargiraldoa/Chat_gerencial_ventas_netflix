@@ -44,7 +44,40 @@ fecha_fin = st.date_input("🗓️ Fecha final", value=pd.to_datetime("2025-12-3
 data = data[(data['fecha'] >= pd.to_datetime(fecha_inicio)) & (data['fecha'] <= pd.to_datetime(fecha_fin))]
 
 # Tabs
-_, tab_productos, tab_sucursales, tab_tendencias, tab_chat = st.tabs(["🏠 Inicio", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial"])
+_, tab_inicio, tab_inicio2, tab_productos, tab_sucursales, tab_tendencias, tab_chat = st.tabs(["🏠 Inicio", "🧠 Inicio Alternativo", "📦 Productos", "🏢 Sucursales", "📈 Tendencias", "💬 Chat Gerencial"])
+
+with tab_inicio:
+    st.markdown("## 🎬 ¡Bienvenido al Chat Gerencial!")
+    st.markdown("Este panel te permite visualizar y analizar el desempeño de ventas en tiempo real con una experiencia tipo Netflix. Usa las pestañas para explorar productos, sucursales, tendencias y hacer preguntas al asistente inteligente.")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("📦 Productos Activos", data['producto'].nunique())
+    col2.metric("🏢 Sucursales", data['sucursal'].nunique())
+    col3.metric("🧑‍💼 Vendedores", data['vendedor'].nunique())
+
+    st.markdown("---")
+    st.markdown("### 📈 Vista rápida: Ventas diarias recientes")
+    ultimos_dias = data[data['fecha'] > data['fecha'].max() - pd.Timedelta(days=7)]
+    ventas_dia = ultimos_dias.groupby('fecha')['ventas'].sum().reset_index()
+    fig_inicio = px.area(ventas_dia, x="fecha", y="ventas", title="Ventas en los últimos 7 días", color_discrete_sequence=["#00FFAA"])
+    st.plotly_chart(fig_inicio, use_container_width=True)
+
+with tab_inicio2:
+    st.markdown("## 🧠 Análisis Rápido y Destacados")
+    st.markdown("Conoce de un vistazo los elementos clave destacados:")
+
+    top_producto = data.groupby("producto")["ventas"].sum().idxmax()
+    top_sucursal = data.groupby("sucursal")["ventas"].sum().idxmax()
+    top_vendedor = data.groupby("vendedor")["ventas"].sum().idxmax()
+
+    st.markdown("### 🔝 Resúmenes:")
+    col1, col2, col3 = st.columns(3)
+    col1.success(f"Producto Top: {top_producto}")
+    col2.warning(f"Sucursal Líder: {top_sucursal}")
+    col3.info(f"Vendedor Destacado: {top_vendedor}")
+
+    fig_bar = px.bar(data.groupby("producto")["ventas"].sum().reset_index(), x="producto", y="ventas", title="Ventas Totales por Producto", color="producto")
+    st.plotly_chart(fig_bar, use_container_width=True)
 
 with tab_sucursales:
     st.subheader("🏢 Sucursales Top (estilo Netflix)")
