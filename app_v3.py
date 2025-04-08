@@ -1,4 +1,41 @@
-...    
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from io import BytesIO
+from fpdf import FPDF
+
+st.set_page_config(layout="wide")
+st.title("📊 Análisis Gerencial - Modo Netflix")
+
+archivo = st.file_uploader("📂 Cargar archivo Excel de ventas", type=["xlsx"])
+
+if archivo:
+    df = pd.read_excel(archivo)
+    df['fecha'] = pd.to_datetime(df['fecha'])
+    df['hora'] = df['hora'].astype(str)
+    df['dia'] = df['fecha'].dt.day_name()
+
+    ventas_total = df['ventas_reales'].sum()
+    cumplimiento_prom = df['cumplimiento'].mean()
+    producto_top = df.groupby('producto')['ventas_reales'].sum().idxmax()
+    sucursal_top = df.groupby('sucursal')['ventas_reales'].sum().idxmax()
+    vendedor_top = df.groupby('vendedor')['ventas_reales'].sum().idxmax()
+
+    # Gráficos
+    fig_dia = px.bar(df.groupby('dia')['ventas_reales'].sum().reindex([
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    ]).reset_index(), x='dia', y='ventas_reales', title="Ventas por Día")
+
+    fig_hora = px.bar(df.groupby('hora')['ventas_reales'].sum().reset_index(), x='hora', y='ventas_reales', title="Ventas por Hora")
+
+    fig_suc = px.bar(df.groupby('sucursal')['ventas_reales'].sum().reset_index(), x='sucursal', y='ventas_reales', title="Ventas por Sucursal")
+
+    st.plotly_chart(fig_dia, use_container_width=True)
+    st.plotly_chart(fig_hora, use_container_width=True)
+    st.plotly_chart(fig_suc, use_container_width=True)
+
+    st.subheader("📥 Informe Gerencial PDF")
+
     if st.button("📥 Descargar análisis en PDF"):
         import tempfile
         from matplotlib import pyplot as plt
