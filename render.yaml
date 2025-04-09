@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: chat-gerencial-v4
+    env: docker
+    repo: https://github.com/cesargiraldoa/chat_gerencial_ventas_netflix
+    branch: deploy-render
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8000
