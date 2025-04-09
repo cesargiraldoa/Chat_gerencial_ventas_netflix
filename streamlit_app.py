@@ -20,10 +20,10 @@ perfil = st.sidebar.selectbox(
 # Guardar perfil en sesión
 st.session_state.perfil = perfil
 
-# --- Cargar archivo de ejemplo ---
+# --- Cargar archivo de ejemplo actualizado ---
 @st.cache_data
 def cargar_datos():
-    df = pd.read_excel("data/ventas_ejemplo.xlsx")
+    df = pd.read_excel("data/ventas_ejemplo_v4.xlsx")
     df["Fecha"] = pd.to_datetime(df["Fecha"])
     return df
 
@@ -76,5 +76,3 @@ elif perfil == "Director de Marketing":
 # --- Footer ---
 st.markdown("---")
 st.caption("🔧 Versión 4 en desarrollo | Hecho con ❤️ y Streamlit")
-
-
