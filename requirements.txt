@@ -1,11 +1,10 @@
-pandas
 streamlit
+pandas
 plotly
-matplotlib
 openpyxl
-fpdf
-kaleido
-fpdf==1.7.2
+opencv-python
+face_recognition
+streamlit_webrtc
 
 
 
