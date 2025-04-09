@@ -1,7 +1,10 @@
-# Imagen base con dependencias para face_recognition
+# Imagen base
 FROM python:3.10-slim
 
-# Instala librerías del sistema necesarias para dlib y face_recognition
+# Evita interacción en instalación de paquetes
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Actualiza e instala dependencias necesarias para face_recognition
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -20,19 +23,21 @@ RUN apt-get update && apt-get install -y \
     libv4l-dev \
     libx264-dev \
     ffmpeg \
+    git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Crea el directorio de la app
+# Directorio de trabajo
 WORKDIR /app
 
-# Copia el código fuente
+# Copia los archivos del proyecto
 COPY . /app
 
-# Instala dependencias Python
+# Instala las dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expone el puerto de Streamlit
+# Expone el puerto para Streamlit
 EXPOSE 8501
 
-# Comando para ejecutar la app
+# Comando para iniciar la app
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
