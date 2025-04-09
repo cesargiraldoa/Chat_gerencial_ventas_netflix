@@ -1,6 +1,6 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Instala dependencias del sistema necesarias
+# Instala dependencias del sistema para face_recognition y OpenCV
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -19,19 +19,17 @@ RUN apt-get update && apt-get install -y \
     libv4l-dev \
     libx264-dev \
     ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
-# Instala las librerías de Python
-COPY requirements.txt .
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia los archivos del proyecto
+COPY . .
+
+# Instala las dependencias de Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copia todo el código de la app
-COPY . /app
-WORKDIR /app
-
-# Expone el puerto de Streamlit
-EXPOSE 8501
-
-# Comando para ejecutar la app
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Comando para ejecutar la app de Streamlit
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8000", "--server.address=0.0.0.0"]
