@@ -1,11 +1,8 @@
-pandas
+face_recognition
+opencv-python
 streamlit
-plotly
-matplotlib
-openpyxl
-fpdf
-kaleido
-fpdf==1.7.2
+pandas
+numpy
 
 
 
