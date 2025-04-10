@@ -1,20 +1,13 @@
-# Imagen base de Python
+# Imagen base ligera de Python
 FROM python:3.11-slim
 
-# Variables de entorno para buen comportamiento de Python
+# Variables de entorno
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Evita errores de DNS y permite instalación de dependencias nativas
-RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    software-properties-common
-
-# Instala librerías del sistema necesarias para face_recognition y OpenCV
-RUN apt-get update && apt-get install -y \
+# Actualiza y prepara el entorno de sistema operativo
+RUN apt-get update && apt-get clean && apt-get install -y \
     build-essential \
     cmake \
     libgtk-3-dev \
@@ -33,19 +26,20 @@ RUN apt-get update && apt-get install -y \
     libx264-dev \
     ffmpeg \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Directorio de trabajo
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copia el contenido del repositorio
+# Copiar archivos del proyecto
 COPY . .
 
-# Instala dependencias de Python
+# Instalar dependencias Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Puerto para Streamlit
+# Exponer puerto para Streamlit
 EXPOSE 8501
 
-# Comando para correr la app
+# Comando de inicio
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
