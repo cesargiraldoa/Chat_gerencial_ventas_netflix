@@ -1,13 +1,12 @@
-# Imagen base ligera de Python
-FROM python:3.11-slim
+# Imagen base ligera con Python 3.9
+FROM python:3.9-slim
 
-# Variables de entorno
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Evitar prompts de configuración
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Actualiza y prepara el entorno de sistema operativo
-RUN apt-get update && apt-get clean && apt-get install -y \
+# Instalar dependencias del sistema necesarias para face_recognition y OpenCV
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     libgtk-3-dev \
@@ -25,21 +24,21 @@ RUN apt-get update && apt-get clean && apt-get install -y \
     libv4l-dev \
     libx264-dev \
     ffmpeg \
-    git \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Establecer directorio de trabajo
-WORKDIR /app
-
-# Copiar archivos del proyecto
-COPY . .
-
-# Instalar dependencias Python
+# Instalar dependencias Python desde requirements.txt
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponer puerto para Streamlit
-EXPOSE 8501
+# Copiar el resto del proyecto
+COPY . /app
+WORKDIR /app
 
-# Comando de inicio
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+# Puerto para Streamlit
+EXPOSE 8080
+
+# Comando para ejecutar la app
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
