@@ -1,7 +1,7 @@
 services:
   - type: web
-    name: chat-gerencial
+    name: chat-gerencial-ventas-netflix
     env: docker
     plan: free
     branch: deploy-render
-    rootDir: .
+    autoDeploy: true
