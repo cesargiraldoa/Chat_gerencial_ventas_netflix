@@ -1,10 +1,10 @@
 FROM python:3.10-slim
 
-# Evitar interacciones en la instalación
+# Evitar prompts en instalaciones
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Actualiza y corrige paquetes del sistema
-RUN apt-get update --fix-missing && apt-get install -y \
+# Instala dependencias necesarias del sistema
+RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     libgtk-3-dev \
@@ -12,9 +12,9 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libopenblas-dev \
     liblapack-dev \
     libx11-dev \
+    libjpeg-dev \
     libtbb2 \
     libtbb-dev \
-    libjpeg-dev \
     libpng-dev \
     libavcodec-dev \
     libavformat-dev \
@@ -22,20 +22,21 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libv4l-dev \
     libx264-dev \
     ffmpeg \
-    git \
-    curl && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
+    curl \
+    git && \
+    rm -rf /var/lib/apt/lists/*
 
-# Establece el directorio de trabajo
+# Instalar dlib antes de face_recognition
+RUN pip install --no-cache-dir dlib
+
+# Establece directorio de trabajo
 WORKDIR /app
 
-# Copia requirements e instala
+# Copia archivos
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el resto de archivos
 COPY . .
 
-# Comando por defecto para ejecutar la app
+# Ejecuta la app
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
