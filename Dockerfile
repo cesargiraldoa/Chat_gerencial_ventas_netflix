@@ -1,12 +1,19 @@
-# Usa una imagen base oficial de Python
+# Imagen base de Python
 FROM python:3.11-slim
 
-# Evita que Python genere archivos pyc
+# Variables de entorno para buen comportamiento de Python
 ENV PYTHONDONTWRITEBYTECODE=1
-# Asegura que se muestren los logs
 ENV PYTHONUNBUFFERED=1
 
-# Instala dependencias necesarias del sistema para face_recognition
+# Evita errores de DNS y permite instalación de dependencias nativas
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    software-properties-common
+
+# Instala librerías del sistema necesarias para face_recognition y OpenCV
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -26,20 +33,19 @@ RUN apt-get update && apt-get install -y \
     libx264-dev \
     ffmpeg \
     git \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Crea directorio de trabajo
+# Directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos del proyecto al contenedor
+# Copia el contenido del repositorio
 COPY . .
 
-# Instala las dependencias de Python
+# Instala dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expone el puerto que Streamlit usará
+# Puerto para Streamlit
 EXPOSE 8501
 
-# Comando para ejecutar la app
+# Comando para correr la app
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
