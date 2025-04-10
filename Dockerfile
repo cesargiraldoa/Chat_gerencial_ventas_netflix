@@ -1,9 +1,12 @@
-FROM python:3.10-slim
+# Usa una imagen base oficial de Python
+FROM python:3.11-slim
 
-# Evitar prompts en instalaciones
-ENV DEBIAN_FRONTEND=noninteractive
+# Evita que Python genere archivos pyc
+ENV PYTHONDONTWRITEBYTECODE=1
+# Asegura que se muestren los logs
+ENV PYTHONUNBUFFERED=1
 
-# Instala dependencias necesarias del sistema
+# Instala dependencias necesarias del sistema para face_recognition
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -12,9 +15,9 @@ RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     liblapack-dev \
     libx11-dev \
-    libjpeg-dev \
     libtbb2 \
     libtbb-dev \
+    libjpeg-dev \
     libpng-dev \
     libavcodec-dev \
     libavformat-dev \
@@ -22,21 +25,21 @@ RUN apt-get update && apt-get install -y \
     libv4l-dev \
     libx264-dev \
     ffmpeg \
+    git \
     curl \
-    git && \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar dlib antes de face_recognition
-RUN pip install --no-cache-dir dlib
-
-# Establece directorio de trabajo
+# Crea directorio de trabajo
 WORKDIR /app
 
-# Copia archivos
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copia los archivos del proyecto al contenedor
 COPY . .
 
-# Ejecuta la app
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
+# Instala las dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expone el puerto que Streamlit usará
+EXPOSE 8501
+
+# Comando para ejecutar la app
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
