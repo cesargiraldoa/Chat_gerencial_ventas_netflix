@@ -1,11 +1,7 @@
-# Usa una imagen base con Python preinstalado
 FROM python:3.9-slim
 
-# Establece el directorio de trabajo
-WORKDIR /app
-
-# Copia los archivos de la app
-COPY . .
+# Evita prompts interactivos
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Instala dependencias del sistema necesarias para face_recognition y OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -16,10 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopenblas-dev \
     liblapack-dev \
     libx11-dev \
-    libtbb2 \
-    libtbb-dev \
     libjpeg-dev \
     libpng-dev \
+    libtbb2 \
+    libtbb-dev \
     libavcodec-dev \
     libavformat-dev \
     libswscale-dev \
@@ -27,16 +23,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libx264-dev \
     ffmpeg \
     curl \
-    git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    git \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instala las dependencias de Python
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Copia todo el contenido del repo al contenedor
+COPY . /app
+WORKDIR /app
 
-# Expone el puerto en el que corre Streamlit
+# Instala dependencias Python
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Expone puerto usado por Streamlit
 EXPOSE 8501
 
-# Comando de inicio
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+# Comando de arranque
+CMD ["streamlit", "run", "streamlit_app.py"]
