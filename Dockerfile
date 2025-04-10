@@ -1,11 +1,10 @@
-# Usa una imagen base completa que incluye herramientas necesarias
-FROM python:3.10
+FROM python:3.10-slim
 
-# Establece entorno no interactivo para evitar bloqueos en instalaciones
+# Evitar interacciones en la instalación
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Actualiza e instala librerías necesarias para face_recognition
-RUN apt-get update && apt-get install -y \
+# Actualiza y corrige paquetes del sistema
+RUN apt-get update --fix-missing && apt-get install -y \
     build-essential \
     cmake \
     libgtk-3-dev \
@@ -24,20 +23,19 @@ RUN apt-get update && apt-get install -y \
     libx264-dev \
     ffmpeg \
     git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
-# Directorio de trabajo
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia archivos del proyecto
-COPY . /app
+# Copia requirements e instala
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Instala dependencias de Python
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Copia el resto de archivos
+COPY . .
 
-# Expone puerto para Streamlit
-EXPOSE 8501
-
-# Comando para ejecutar Streamlit
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.enableCORS=false"]
+# Comando por defecto para ejecutar la app
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
