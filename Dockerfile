@@ -2,7 +2,7 @@ FROM python:3.9-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Instalar dependencias necesarias para face_recognition y opencv-python-headless
+# Instalar dependencias del sistema para face_recognition y opencv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -26,14 +26,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copiar e instalar dependencias Python
+# Copiar e instalar requerimientos de Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar todo el proyecto
+# Copiar la app
 COPY . /app
 WORKDIR /app
 
+# Exponer puerto
 EXPOSE 8080
 
+# Comando de inicio
 CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
